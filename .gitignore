@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+.env.local
+.env*.local
+.DS_Store
+*.pem
+data/
+城市照片/
+已点亮城市图片/
+public/uploads/

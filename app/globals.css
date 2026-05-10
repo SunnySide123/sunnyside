@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+  --cream: #F5F0EB;
+  --cream-dark: #E8E0D5;
+  --charcoal: #2C2C2C;
+  --charcoal-light: #5C5C5C;
+  --warm: #8B7355;
+  --warm-light: #C4A882;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--charcoal);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.7;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--charcoal);
+}
+
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+a, button {
+  transition: all 0.3s ease;
+}
+
+a {
+  color: var(--charcoal);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--warm);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--cream-dark);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--warm-light);
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(2px);
+  background-color: rgba(44, 44, 44, 0.3);
+}
+
+.photo-card {
+  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.4s ease;
+}
+.photo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(44, 44, 44, 0.08);
+}
+
+.btn-minimal {
+  border: 1px solid var(--charcoal);
+  background: transparent;
+  color: var(--charcoal);
+  padding: 0.5rem 1.5rem;
+  font-size: 0.85rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-minimal:hover {
+  background: var(--charcoal);
+  color: var(--cream);
+}
+
+.input-minimal {
+  border: none;
+  border-bottom: 1px solid var(--cream-dark);
+  background: transparent;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--charcoal);
+  outline: none;
+  transition: border-color 0.3s ease;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.input-minimal:focus {
+  border-bottom-color: var(--charcoal);
+}
+.input-minimal::placeholder {
+  color: #B0A89E;
+}
