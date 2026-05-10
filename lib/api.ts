@@ -76,16 +76,52 @@ export async function addCityPhoto(cityId: string, data: { image_url: string; da
 }
 export async function deleteCityPhoto(id: string) { return del('/api/city-photos/' + id) }
 
-// Upload file directly to Supabase Storage (bypasses Vercel 4.5MB limit)
+// Client-side image resize before upload
+async function compressImage(file: File, maxSize = 2048, quality = 0.85): Promise<File> {
+  // Skip non-image or SVG
+  if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') return file
+  // Skip if already small enough
+  if (file.size < 500 * 1024) return file
+
+  try {
+    const bitmap = await createImageBitmap(file)
+    let { width, height } = bitmap
+    if (width <= maxSize && height <= maxSize) {
+      bitmap.close()
+      return file
+    }
+
+    const ratio = Math.min(maxSize / width, maxSize / height)
+    width = Math.round(width * ratio)
+    height = Math.round(height * ratio)
+
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')!
+    ctx.drawImage(bitmap, 0, 0, width, height)
+    bitmap.close()
+
+    const blob = await new Promise<Blob>((resolve) =>
+      canvas.toBlob((b) => resolve(b!), 'image/jpeg', quality)
+    )
+
+    return new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })
+  } catch {
+    return file // fallback: upload original
+  }
+}
+
+// Upload file directly to Supabase Storage
 export async function uploadFile(file: File): Promise<string> {
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+  const compressed = await compressImage(file)
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`
 
   const supabase = getSupabaseClient()
   const { error } = await supabase.storage
     .from('photos')
-    .upload(fileName, file, {
-      contentType: file.type || 'image/jpeg',
+    .upload(fileName, compressed, {
+      contentType: 'image/jpeg',
       upsert: false,
     })
 
