@@ -1,4 +1,4 @@
-// Client-side API helpers — call our own Next.js API routes
+// Client-side API helpers
 
 import { getSupabaseClient } from './supabase-client'
 
@@ -16,7 +16,10 @@ async function post(path: string, body?: any) {
     headers: body instanceof FormData ? {} : { 'Content-Type': 'application/json' },
     body: body instanceof FormData ? body : JSON.stringify(body),
   })
-  if (!res.ok) return null
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }))
+    throw new Error(err.error || `HTTP ${res.status}`)
+  }
   return res.json()
 }
 
@@ -26,7 +29,7 @@ async function put(path: string, body: any) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) return null
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
 
@@ -76,11 +79,9 @@ export async function addCityPhoto(cityId: string, data: { image_url: string; da
 }
 export async function deleteCityPhoto(id: string) { return del('/api/city-photos/' + id) }
 
-// Client-side image resize before upload
+// Upload file — compress on client, then send through API for server-side processing
 async function compressImage(file: File, maxSize = 2048, quality = 0.85): Promise<File> {
-  // Skip non-image or SVG
   if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') return file
-  // Skip if already small enough
   if (file.size < 500 * 1024) return file
 
   try {
@@ -108,28 +109,14 @@ async function compressImage(file: File, maxSize = 2048, quality = 0.85): Promis
 
     return new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })
   } catch {
-    return file // fallback: upload original
+    return file
   }
 }
 
-// Upload file directly to Supabase Storage
 export async function uploadFile(file: File): Promise<string> {
   const compressed = await compressImage(file)
-  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`
-
-  const supabase = getSupabaseClient()
-  const { error } = await supabase.storage
-    .from('photos')
-    .upload(fileName, compressed, {
-      contentType: 'image/jpeg',
-      upsert: false,
-    })
-
-  if (error) {
-    console.error('Upload error:', error.message)
-    return ''
-  }
-
-  const { data } = getSupabaseClient().storage.from('photos').getPublicUrl(fileName)
-  return data.publicUrl
+  const formData = new FormData()
+  formData.append('file', compressed)
+  const data = await post('/api/upload', formData)
+  return data?.url || ''
 }
