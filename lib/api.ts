@@ -11,11 +11,14 @@ async function get(path: string) {
 }
 
 async function post(path: string, body?: any) {
-  const res = await fetch(BASE + path, {
+  const opts: RequestInit = {
     method: 'POST',
-    headers: body instanceof FormData ? {} : { 'Content-Type': 'application/json' },
     body: body instanceof FormData ? body : JSON.stringify(body),
-  })
+  }
+  if (!(body instanceof FormData)) {
+    opts.headers = { 'Content-Type': 'application/json' }
+  }
+  const res = await fetch(BASE + path, opts)
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }))
     throw new Error(err.error || `HTTP ${res.status}`)
@@ -83,6 +86,12 @@ export async function deleteCityPhoto(id: string) { return del('/api/city-photos
 async function compressImage(file: File, maxSize = 2048, quality = 0.85): Promise<File> {
   if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') return file
   if (file.size < 500 * 1024) return file
+
+  // HEIC can't be decoded by createImageBitmap in Chrome/Firefox — let server convert it
+  const name = file.name.toLowerCase()
+  if (name.endsWith('.heic') || name.endsWith('.heif') || file.type === 'image/heic' || file.type === 'image/heif') {
+    return file
+  }
 
   try {
     const bitmap = await createImageBitmap(file)
