@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 
 interface Props {
-  cities: { name: string; province: string }[]
+  cities: { name: string; province: string; is_lit: boolean }[]
   fullProvinces: string[]
   onCityClick?: (cityName: string) => void
 }
