@@ -38,10 +38,18 @@ export default function UploadModal({ onClose, onSuccess, defaultCity, mode, cit
 
         if (mode === 'daily') {
           const saved = await addDailyPhoto({ image_url: imageUrl, date, city, note })
-          if (saved) results.push(saved)
+          if (saved) {
+            results.push(saved)
+          } else {
+            alert(`第 ${i + 1} 张保存失败，请检查网络后重试`)
+          }
         } else if (cityId) {
           const saved = await addCityPhoto(cityId, { image_url: imageUrl, date, note })
-          if (saved) results.push(saved)
+          if (saved) {
+            results.push(saved)
+          } else {
+            alert(`第 ${i + 1} 张保存失败，请检查网络后重试`)
+          }
         }
       } catch (err) {
         alert(`上传出错: ${err}`)
