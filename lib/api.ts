@@ -1,5 +1,7 @@
 // Client-side API helpers — call our own Next.js API routes
 
+import { supabase } from './supabase-client'
+
 const BASE = ''
 
 async function get(path: string) {
@@ -74,10 +76,23 @@ export async function addCityPhoto(cityId: string, data: { image_url: string; da
 }
 export async function deleteCityPhoto(id: string) { return del('/api/city-photos/' + id) }
 
-// Upload file
+// Upload file directly to Supabase Storage (bypasses Vercel 4.5MB limit)
 export async function uploadFile(file: File): Promise<string> {
-  const formData = new FormData()
-  formData.append('file', file)
-  const data = await post('/api/upload', formData)
-  return data?.url || ''
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+  const { error } = await supabase.storage
+    .from('photos')
+    .upload(fileName, file, {
+      contentType: file.type || 'image/jpeg',
+      upsert: false,
+    })
+
+  if (error) {
+    console.error('Upload error:', error.message)
+    return ''
+  }
+
+  const { data } = supabase.storage.from('photos').getPublicUrl(fileName)
+  return data.publicUrl
 }
