@@ -57,8 +57,8 @@ export default function ChinaMap({ cities, fullProvinces, onCityClick }: Props) 
       }
 
       // Handle provinces without mapping issues (like 浙江省, 云南省, etc.)
-      for (const prov of litProvinces) {
-        if (provinceGeoMap[prov]) continue // Already handled
+      litProvinces.forEach((prov) => {
+        if (provinceGeoMap[prov]) return
         const isFull = fullProvinces.includes(prov)
         regions.push({
           name: prov,
@@ -69,7 +69,7 @@ export default function ChinaMap({ cities, fullProvinces, onCityClick }: Props) 
           },
           label: { show: isFull, color: '#8B7355', fontSize: 10 },
         })
-      }
+      })
 
       // Add city name labels as scatter points (small dots with city name)
       const cityCoords: Record<string, [number, number]> = {
