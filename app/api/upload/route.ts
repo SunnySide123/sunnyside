@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 const BUCKET = 'photos'
 
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       uploadBuffer = buffer
     }
 
-    const { error } = await supabase.storage
+    const { error } = await getSupabase().storage
       .from(BUCKET)
       .upload(fileName, uploadBuffer, {
         contentType: isHeic ? 'image/jpeg' : file.type || 'image/jpeg',
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName)
+    const { data: urlData } = getSupabase().storage.from(BUCKET).getPublicUrl(fileName)
 
     return NextResponse.json({ url: urlData.publicUrl })
   } catch (err: any) {

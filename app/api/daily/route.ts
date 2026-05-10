@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const from = searchParams.get('from')
   const to = searchParams.get('to')
 
-  let query = supabase.from('daily_photos').select('*').order('date', { ascending: false })
+  let query = getSupabase().from('daily_photos').select('*').order('date', { ascending: false })
 
   if (days) {
     const since = new Date()
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { data: photo, error } = await supabase
+  const { data: photo, error } = await getSupabase()
     .from('daily_photos')
     .insert({
       image_url: body.image_url,

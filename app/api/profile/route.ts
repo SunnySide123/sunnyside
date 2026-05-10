@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 export async function GET() {
-  const { data: profile } = await supabase
+  const { data: profile } = await getSupabase()
     .from('profiles')
     .select('*')
     .limit(1)
@@ -19,7 +19,7 @@ export async function PUT(req: NextRequest) {
   if (body.signature !== undefined) updates.signature = body.signature
   updates.updated_at = new Date().toISOString()
 
-  const { data: profile } = await supabase
+  const { data: profile } = await getSupabase()
     .from('profiles')
     .upsert({ id: 'default', ...updates })
     .select()

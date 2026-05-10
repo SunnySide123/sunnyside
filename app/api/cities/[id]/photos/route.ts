@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from('city_photos')
     .select('*')
     .eq('city_id', params.id)
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const body = await req.json()
-  const { data: photo, error } = await supabase
+  const { data: photo, error } = await getSupabase()
     .from('city_photos')
     .insert({
       city_id: params.id,

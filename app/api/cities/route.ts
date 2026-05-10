@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const litOnly = searchParams.get('litOnly')
   const sortBy = searchParams.get('sortBy') || 'date'
 
-  let query = supabase.from('cities').select('*')
+  let query = getSupabase().from('cities').select('*')
 
   if (province) query = query.eq('province', province)
   if (litOnly === 'true') query = query.eq('is_lit', true)
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { data: city, error } = await supabase
+  const { data: city, error } = await getSupabase()
     .from('cities')
     .insert({
       name: body.name,

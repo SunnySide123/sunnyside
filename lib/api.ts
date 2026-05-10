@@ -1,6 +1,6 @@
 // Client-side API helpers — call our own Next.js API routes
 
-import { supabase } from './supabase-client'
+import { getSupabaseClient } from './supabase-client'
 
 const BASE = ''
 
@@ -81,6 +81,7 @@ export async function uploadFile(file: File): Promise<string> {
   const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
   const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
 
+  const supabase = getSupabaseClient()
   const { error } = await supabase.storage
     .from('photos')
     .upload(fileName, file, {
@@ -93,6 +94,6 @@ export async function uploadFile(file: File): Promise<string> {
     return ''
   }
 
-  const { data } = supabase.storage.from('photos').getPublicUrl(fileName)
+  const { data } = getSupabaseClient().storage.from('photos').getPublicUrl(fileName)
   return data.publicUrl
 }
