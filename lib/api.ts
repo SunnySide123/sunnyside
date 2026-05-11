@@ -82,7 +82,7 @@ export async function addCityPhoto(cityId: string, data: { image_url: string; da
 }
 export async function deleteCityPhoto(id: string) { return del('/api/city-photos/' + id) }
 
-// Upload file — compress on client, then send through API for server-side processing
+// Upload file — compress on client, upload directly to Supabase Storage
 async function compressImage(file: File, maxSize = 2048, quality = 0.85): Promise<File> {
   if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') return file
   if (file.size < 500 * 1024) return file
@@ -124,8 +124,30 @@ async function compressImage(file: File, maxSize = 2048, quality = 0.85): Promis
 
 export async function uploadFile(file: File): Promise<string> {
   const compressed = await compressImage(file)
-  const formData = new FormData()
-  formData.append('file', compressed)
-  const data = await post('/api/upload', formData)
-  return data?.url || ''
+
+  const isHeic = file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif') ||
+                 file.type === 'image/heic' || file.type === 'image/heif'
+  const isPng = file.type === 'image/png' && !isHeic
+
+  // Determine extension and content type from the ACTUAL file content
+  // compressImage converts non-HEIC images to JPEG; HEIC stays as-is
+  const ext = isHeic ? 'heic' : (isPng && compressed === file ? 'png' : 'jpg')
+  const contentType = isHeic ? 'image/heic' : (ext === 'png' ? 'image/png' : 'image/jpeg')
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+  const supabase = getSupabaseClient()
+  const { error } = await supabase.storage
+    .from('photos')
+    .upload(fileName, compressed, {
+      contentType,
+      upsert: false,
+    })
+
+  if (error) {
+    console.error('Upload error:', error.message)
+    throw new Error(error.message)
+  }
+
+  const { data } = getSupabaseClient().storage.from('photos').getPublicUrl(fileName)
+  return data.publicUrl
 }
