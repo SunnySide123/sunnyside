@@ -5,7 +5,7 @@ import Footer from './components/Footer'
 
 export const metadata: Metadata = {
   title: 'SunnySide',
-  description: '用理性写代码，用感性看世界。',
+  description: '未来美在还是未来',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

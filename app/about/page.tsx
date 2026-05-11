@@ -7,11 +7,11 @@ export default function AboutPage() {
 
       <div className="space-y-8 text-charcoal-light leading-relaxed">
         <p className="text-center text-lg font-serif text-charcoal">
-          &ldquo;用理性写代码，用感性看世界。&rdquo;
+          &ldquo;未来美在还是未来&rdquo;
         </p>
 
         <p>
-          Hi，我是 SunnySide，一名计算机科学专业的学生，热爱编程、旅行与摄影。
+          Hi，我是 SunnySide，热爱骑行、旅行与摄影。
           这个网站是我个人的数字花园——记录日常的点滴、走过的城市、以及成长中的履历。
         </p>
 
