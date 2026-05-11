@@ -7,7 +7,7 @@ export default function AboutPage() {
 
       <div className="space-y-8 text-charcoal-light leading-relaxed">
         <p className="text-center text-lg font-serif text-charcoal">
-          &ldquo;未来美在还是未来&rdquo;
+          &ldquo;我与我周旋久，宁做我&rdquo;
         </p>
 
         <p>

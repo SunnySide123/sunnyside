@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { uploadFile } from '@/lib/api'
 
+const DEFAULT_AVATAR = 'https://lmvazzuggqdpelcucxhw.supabase.co/storage/v1/object/public/photos/1778472586369-durla2.png'
+
 interface Props {
   avatarUrl: string | null
   onUpdate: (url: string) => void
@@ -30,11 +32,7 @@ export default function AvatarUpload({ avatarUrl, onUpdate }: Props) {
     <div className="flex flex-col items-center gap-4">
       <label className="cursor-pointer group relative">
         <div className="w-28 h-28 rounded-full overflow-hidden bg-cream-dark flex items-center justify-center">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="头像" className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-4xl font-serif text-charcoal-light">S</span>
-          )}
+          <img src={avatarUrl || DEFAULT_AVATAR} alt="头像" className="w-full h-full object-cover" />
         </div>
         <div className="absolute inset-0 rounded-full bg-charcoal/0 group-hover:bg-charcoal/10 transition-all flex items-center justify-center">
           <span className="text-xs text-charcoal opacity-0 group-hover:opacity-100 transition-opacity text-center leading-tight">

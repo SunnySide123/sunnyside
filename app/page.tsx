@@ -40,7 +40,7 @@ export default function HomePage() {
         </h1>
         <AvatarUpload avatarUrl={profile?.avatar_url || null} onUpdate={handleAvatarUpdate} />
         <SignatureEdit
-          signature={profile?.signature || '未来美在还是未来'}
+          signature={profile?.signature || '我与我周旋久，宁做我'}
           onSave={handleSignatureSave}
         />
       </div>
