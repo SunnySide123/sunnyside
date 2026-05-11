@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { uploadFile } from '@/lib/api'
 
-const DEFAULT_AVATAR = 'https://lmvazzuggqdpelcucxhw.supabase.co/storage/v1/object/public/photos/1778472586369-durla2.png'
+const DEFAULT_AVATAR = 'https://lmvazzuggqdpelcucxhw.supabase.co/storage/v1/object/public/photos/avatar-default.png'
 
 interface Props {
   avatarUrl: string | null
