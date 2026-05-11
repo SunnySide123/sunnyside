@@ -15,10 +15,15 @@ export default function AvatarUpload({ avatarUrl, onUpdate }: Props) {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    const url = await uploadFile(file)
-    if (url) onUpdate(url)
-    else alert('上传失败')
-    setUploading(false)
+    try {
+      const url = await uploadFile(file)
+      if (url) onUpdate(url)
+      else alert('上传失败')
+    } catch (err: any) {
+      alert('上传失败: ' + (err.message || '未知错误'))
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (

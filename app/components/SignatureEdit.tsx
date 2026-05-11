@@ -10,10 +10,18 @@ interface Props {
 export default function SignatureEdit({ signature, onSave }: Props) {
   const [editing, setEditing] = useState(false)
   const [text, setText] = useState(signature)
+  const [saving, setSaving] = useState(false)
 
-  const handleSave = () => {
-    onSave(text)
-    setEditing(false)
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      await onSave(text)
+      setEditing(false)
+    } catch (err: any) {
+      alert('保存失败: ' + (err.message || '未知错误'))
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (editing) {
@@ -27,7 +35,7 @@ export default function SignatureEdit({ signature, onSave }: Props) {
           autoFocus
           onKeyDown={(e) => e.key === 'Enter' && handleSave()}
         />
-        <button onClick={handleSave} className="btn-minimal text-xs px-3 py-1">保存</button>
+        <button onClick={handleSave} disabled={saving} className="btn-minimal text-xs px-3 py-1">{saving ? '保存中...' : '保存'}</button>
         <button onClick={() => { setText(signature); setEditing(false) }} className="text-xs text-charcoal-light hover:text-charcoal">取消</button>
       </div>
     )
