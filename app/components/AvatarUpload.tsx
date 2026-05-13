@@ -32,7 +32,17 @@ export default function AvatarUpload({ avatarUrl, onUpdate }: Props) {
     <div className="flex flex-col items-center gap-4">
       <label className="cursor-pointer group relative">
         <div className="w-28 h-28 rounded-full overflow-hidden bg-cream-dark flex items-center justify-center">
-          <img src={avatarUrl || DEFAULT_AVATAR} alt="头像" className="w-full h-full object-cover" />
+          <img
+            src={avatarUrl || DEFAULT_AVATAR}
+            alt="头像"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const img = e.target as HTMLImageElement
+              if (img.src !== DEFAULT_AVATAR) {
+                img.src = DEFAULT_AVATAR
+              }
+            }}
+          />
         </div>
         <div className="absolute inset-0 rounded-full bg-charcoal/0 group-hover:bg-charcoal/10 transition-all flex items-center justify-center">
           <span className="text-xs text-charcoal opacity-0 group-hover:opacity-100 transition-opacity text-center leading-tight">
